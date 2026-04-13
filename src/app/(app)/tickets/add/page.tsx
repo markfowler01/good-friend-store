@@ -39,7 +39,7 @@ function AddTicketsContent() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState(3);
   const [reason, setReason] = useState("");
   const [customReason, setCustomReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -148,7 +148,7 @@ function AddTicketsContent() {
         );
       }
       setSelectedStudents([]);
-      setAmount(1);
+      setAmount(3);
       setReason("");
       setCustomReason("");
       fetchStudents();

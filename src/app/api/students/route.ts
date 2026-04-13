@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, grade } = await request.json();
+  const { name, grade, startingTickets } = await request.json();
 
   if (!name || !grade) {
     return NextResponse.json(
@@ -50,6 +50,10 @@ export async function POST(request: NextRequest) {
 
   await connectDB();
 
-  const student = await Student.create({ name, grade });
+  const student = await Student.create({
+    name,
+    grade,
+    ticketBalance: startingTickets || 0,
+  });
   return NextResponse.json(student, { status: 201 });
 }

@@ -2,11 +2,10 @@
 
 import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import Card, { CardBody, CardHeader } from "@/components/ui/Card";
+import Card, { CardBody } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 import SearchBar from "@/components/ui/SearchBar";
 import Badge from "@/components/ui/Badge";
-import Modal from "@/components/ui/Modal";
 import Spinner from "@/components/ui/Spinner";
 
 interface Student {
@@ -25,9 +24,8 @@ function RedeemContent() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [amount, setAmount] = useState(1);
+  const [amount, setAmount] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
@@ -53,7 +51,7 @@ function RedeemContent() {
   }, [preselectedStudent, students, selectedStudent]);
 
   async function handleRedeem() {
-    if (!selectedStudent) return;
+    if (!selectedStudent || amount < 1) return;
 
     setSubmitting(true);
     setError("");
@@ -78,136 +76,148 @@ function RedeemContent() {
 
       const data = await res.json();
       setSuccess(
-        `Redeemed ${amount} ticket${amount > 1 ? "s" : ""} from ${selectedStudent.name}. Remaining balance: ${data.newBalance}`
+        `Done! ${selectedStudent.name} spent ${amount} ticket${amount > 1 ? "s" : ""}. Remaining: ${data.newBalance}`
       );
       setSelectedStudent(null);
-      setAmount(1);
-      setShowConfirm(false);
+      setAmount(0);
       fetchStudents();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to redeem tickets");
-      setShowConfirm(false);
     } finally {
       setSubmitting(false);
     }
   }
 
+  // Quick-spend buttons
+  const quickAmounts = [1, 2, 3, 5, 10];
+
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-heading font-bold text-bca-dark mb-6">Redeem Tickets</h1>
+    <div className="max-w-lg mx-auto">
+      <h1 className="text-2xl font-heading font-bold text-bca-dark mb-2">Store Checkout</h1>
+      <p className="text-sm text-gray-500 mb-6">Tap a student, pick how many tickets to spend</p>
 
       {success && (
-        <div className="bg-green-50 text-green-700 text-sm px-4 py-3 rounded-lg mb-4">
+        <div className="bg-green-50 text-green-700 px-4 py-3 rounded-lg mb-4 text-center font-medium">
           {success}
         </div>
       )}
       {error && (
-        <div className="bg-red-50 text-bca-red text-sm px-4 py-3 rounded-lg mb-4">
+        <div className="bg-red-50 text-bca-red px-4 py-3 rounded-lg mb-4 text-center">
           {error}
         </div>
       )}
 
-      {/* Selected Student Display */}
+      {/* Selected Student - big prominent display */}
       {selectedStudent ? (
-        <Card className="mb-6">
-          <CardBody>
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-bca-teal/10 text-bca-teal flex items-center justify-center font-heading font-bold text-lg">
-                {selectedStudent.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
+        <>
+          <Card className="mb-4">
+            <CardBody>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 h-14 rounded-full bg-bca-teal/10 text-bca-teal flex items-center justify-center font-heading font-bold text-lg">
+                    {selectedStudent.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-heading font-bold text-bca-dark">
+                      {selectedStudent.name}
+                    </h2>
+                    <Badge variant="gray">
+                      {selectedStudent.grade === "K" ? "K" : `Grade ${selectedStudent.grade}`}
+                    </Badge>
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setSelectedStudent(null); setAmount(0); }}
+                  className="text-gray-400 hover:text-gray-600 p-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-heading font-bold text-bca-dark">
-                  {selectedStudent.name}
-                </h2>
-                <Badge variant="gray">
-                  {selectedStudent.grade === "K" ? "K" : `Grade ${selectedStudent.grade}`}
-                </Badge>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-heading font-bold text-bca-teal">
+
+              {/* Big balance display */}
+              <div className="text-center my-6">
+                <div className="text-5xl font-heading font-bold text-bca-teal">
                   {selectedStudent.ticketBalance}
                 </div>
-                <div className="text-xs text-gray-400">available</div>
+                <div className="text-sm text-gray-400 mt-1">tickets available</div>
               </div>
-              <button
-                onClick={() => setSelectedStudent(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
 
-            {/* Redeem Controls */}
-            <div className="mt-6 space-y-4">
-              <div>
+              {/* Quick spend buttons */}
+              <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tickets to Redeem
+                  How many tickets to spend?
                 </label>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => setAmount(Math.max(1, amount - 1))}
-                    className="w-12 h-12 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl font-bold transition"
-                  >
-                    -
-                  </button>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) =>
-                      setAmount(
-                        Math.max(
-                          1,
-                          Math.min(
-                            selectedStudent.ticketBalance,
-                            parseInt(e.target.value) || 1
-                          )
-                        )
-                      )
-                    }
-                    className="w-24 text-center text-3xl font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
-                    min="1"
-                    max={selectedStudent.ticketBalance}
-                  />
-                  <button
-                    onClick={() =>
-                      setAmount(Math.min(selectedStudent.ticketBalance, amount + 1))
-                    }
-                    className="w-12 h-12 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-xl font-bold transition"
-                  >
-                    +
-                  </button>
+                <div className="grid grid-cols-5 gap-2">
+                  {quickAmounts.map((qty) => (
+                    <button
+                      key={qty}
+                      onClick={() => setAmount(qty)}
+                      disabled={qty > selectedStudent.ticketBalance}
+                      className={`py-3 rounded-lg text-lg font-bold transition ${
+                        amount === qty
+                          ? "bg-bca-teal text-white"
+                          : qty > selectedStudent.ticketBalance
+                          ? "bg-gray-50 text-gray-300 cursor-not-allowed"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      }`}
+                    >
+                      {qty}
+                    </button>
+                  ))}
                 </div>
-                <p className="text-sm text-gray-400 mt-1">
-                  Remaining after: {selectedStudent.ticketBalance - amount} tickets
-                </p>
               </div>
 
+              {/* Custom amount */}
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-sm text-gray-500">Or enter custom:</span>
+                <input
+                  type="number"
+                  value={amount || ""}
+                  onChange={(e) =>
+                    setAmount(
+                      Math.max(0, Math.min(selectedStudent.ticketBalance, parseInt(e.target.value) || 0))
+                    )
+                  }
+                  className="w-20 text-center text-lg font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
+                  min="0"
+                  max={selectedStudent.ticketBalance}
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Result preview */}
+              {amount > 0 && (
+                <div className="bg-gray-50 rounded-lg p-3 mb-4 flex justify-between text-sm">
+                  <span className="text-gray-500">After spending {amount}:</span>
+                  <span className="font-bold text-bca-teal">
+                    {selectedStudent.ticketBalance - amount} remaining
+                  </span>
+                </div>
+              )}
+
+              {/* Big redeem button */}
               <Button
-                onClick={() => setShowConfirm(true)}
+                onClick={handleRedeem}
+                loading={submitting}
                 disabled={amount < 1 || amount > selectedStudent.ticketBalance}
-                variant="secondary"
+                variant="danger"
                 size="lg"
-                className="w-full"
+                className="w-full text-lg"
               >
-                Redeem {amount} Ticket{amount > 1 ? "s" : ""}
+                Spend {amount || 0} Ticket{amount !== 1 ? "s" : ""}
               </Button>
-            </div>
-          </CardBody>
-        </Card>
+            </CardBody>
+          </Card>
+        </>
       ) : (
-        /* Student Search */
+        /* Student Search - simple tap-to-select list */
         <Card>
-          <CardHeader>
-            <h2 className="font-heading font-semibold text-bca-dark">
-              Find Student
-            </h2>
-          </CardHeader>
           <CardBody>
             <SearchBar
               onChange={setSearch}
-              placeholder="Search by name or ID..."
+              placeholder="Search student name..."
               className="mb-3"
             />
 
@@ -215,13 +225,15 @@ function RedeemContent() {
               <div className="flex justify-center py-8">
                 <Spinner />
               </div>
+            ) : students.length === 0 ? (
+              <p className="text-center py-8 text-gray-400">No students found</p>
             ) : (
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+              <div className="space-y-2 max-h-[60vh] overflow-y-auto">
                 {students.map((student) => (
                   <button
                     key={student._id}
-                    onClick={() => { setSelectedStudent(student); setAmount(1); }}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 text-left transition"
+                    onClick={() => { setSelectedStudent(student); setAmount(0); }}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 text-left transition active:bg-bca-teal/10"
                   >
                     <div className="w-10 h-10 rounded-full bg-bca-teal/10 text-bca-teal flex items-center justify-center font-bold text-xs">
                       {student.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)}
@@ -235,7 +247,7 @@ function RedeemContent() {
                       </Badge>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold text-bca-teal">
+                      <div className="text-xl font-bold text-bca-teal">
                         {student.ticketBalance}
                       </div>
                       <div className="text-xs text-gray-400">tickets</div>
@@ -247,51 +259,6 @@ function RedeemContent() {
           </CardBody>
         </Card>
       )}
-
-      {/* Confirmation Modal */}
-      <Modal
-        open={showConfirm}
-        onClose={() => setShowConfirm(false)}
-        title="Confirm Redemption"
-      >
-        {selectedStudent && (
-          <div className="space-y-4">
-            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Student</span>
-                <span className="font-medium">{selectedStudent.name}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Current Balance</span>
-                <span className="font-medium">{selectedStudent.ticketBalance}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Redeeming</span>
-                <span className="font-medium text-bca-red">-{amount}</span>
-              </div>
-              <hr />
-              <div className="flex justify-between text-sm font-bold">
-                <span>New Balance</span>
-                <span className="text-bca-teal">{selectedStudent.ticketBalance - amount}</span>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <Button
-                onClick={handleRedeem}
-                loading={submitting}
-                variant="secondary"
-                className="flex-1"
-              >
-                Confirm
-              </Button>
-              <Button variant="ghost" onClick={() => setShowConfirm(false)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        )}
-      </Modal>
     </div>
   );
 }

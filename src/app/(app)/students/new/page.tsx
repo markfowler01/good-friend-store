@@ -21,6 +21,7 @@ export default function NewStudentPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
+  const [startingTickets, setStartingTickets] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -37,7 +38,11 @@ export default function NewStudentPage() {
     const res = await fetch("/api/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: name.trim(), grade }),
+      body: JSON.stringify({
+        name: name.trim(),
+        grade,
+        startingTickets: startingTickets || 0,
+      }),
     });
 
     if (!res.ok) {
@@ -80,6 +85,15 @@ export default function NewStudentPage() {
               onChange={(e) => setGrade(e.target.value)}
               options={gradeOptions}
               required
+            />
+
+            <Input
+              id="startingTickets"
+              label="Starting Tickets (optional)"
+              type="number"
+              value={startingTickets || ""}
+              onChange={(e) => setStartingTickets(parseInt(e.target.value) || 0)}
+              placeholder="0"
             />
 
             <div className="flex gap-3 pt-2">

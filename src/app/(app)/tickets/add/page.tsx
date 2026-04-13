@@ -196,7 +196,7 @@ function AddTicketsContent() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-3 overflow-hidden">
         {/* Student Selection */}
         <div className="lg:col-span-2">
           <Card>
@@ -308,10 +308,10 @@ function AddTicketsContent() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Number of Tickets
                 </label>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => setAmount(Math.max(1, amount - 1))}
-                    className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-bold transition"
+                    className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-bold transition shrink-0"
                   >
                     -
                   </button>
@@ -319,14 +319,20 @@ function AddTicketsContent() {
                     type="number"
                     value={amount}
                     onChange={(e) => setAmount(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-20 text-center text-2xl font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
+                    className="w-16 text-center text-2xl font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
                     min="1"
                   />
                   <button
                     onClick={() => setAmount(amount + 1)}
-                    className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-bold transition"
+                    className="w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-lg font-bold transition shrink-0"
                   >
                     +
+                  </button>
+                  <button
+                    onClick={() => setAmount(amount + 3)}
+                    className="h-10 px-3 rounded-lg bg-bca-teal/10 hover:bg-bca-teal/20 text-bca-teal text-sm font-bold transition shrink-0"
+                  >
+                    +3
                   </button>
                 </div>
               </div>

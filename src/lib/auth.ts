@@ -1,9 +1,8 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import connectDB from "./mongoose";
-import User from "@/models/User";
 import { getServerSession } from "next-auth";
+
+const ACCESS_CODE = process.env.ACCESS_CODE || "goodfriend";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -14,37 +13,24 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-      name: "credentials",
+      name: "access-code",
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        code: { label: "Access Code", type: "text" },
+        name: { label: "Name", type: "text" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        if (!credentials?.code || !credentials?.name) {
           return null;
         }
 
-        await connectDB();
-        const user = await User.findOne({ email: credentials.email });
-
-        if (!user) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(
-          credentials.password,
-          user.passwordHash
-        );
-
-        if (!isValid) {
+        if (credentials.code.toLowerCase() !== ACCESS_CODE.toLowerCase()) {
           return null;
         }
 
         return {
-          id: user._id.toString(),
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          id: credentials.name.toLowerCase().replace(/\s+/g, "-"),
+          name: credentials.name,
+          role: "helper",
         };
       },
     }),

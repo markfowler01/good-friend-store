@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     amount,
     reason,
     serviceDate: date,
-    recordedBy: session.user.id,
+    recordedBy: session.user.name || "Unknown",
   }));
 
   await Transaction.insertMany(transactionDocs);

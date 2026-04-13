@@ -25,7 +25,7 @@ interface Transaction {
   reason: string;
   serviceDate: string;
   createdAt: string;
-  recordedBy?: { name: string };
+  recordedBy?: string;
 }
 
 export default function StudentDetailPage() {
@@ -165,7 +165,7 @@ export default function StudentDetailPage() {
                     <p className="text-sm font-medium text-bca-dark">{tx.reason}</p>
                     <p className="text-xs text-gray-400">
                       {formatDate(tx.serviceDate)}
-                      {tx.recordedBy && ` \u2022 by ${tx.recordedBy.name}`}
+                      {tx.recordedBy && ` \u2022 by ${tx.recordedBy}`}
                     </p>
                   </div>
                   <div

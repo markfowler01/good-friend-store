@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
           amount,
           reason,
           serviceDate: serviceDate ? new Date(serviceDate) : new Date(),
-          recordedBy: session.user.id,
+          recordedBy: session.user.name || "Unknown",
         },
       ],
       { session: dbSession }
@@ -113,7 +113,6 @@ export async function GET(request: NextRequest) {
     .sort({ createdAt: -1 })
     .limit(limit)
     .populate("studentId", "name uniqueId grade")
-    .populate("recordedBy", "name")
     .lean();
 
   return NextResponse.json(transactions);

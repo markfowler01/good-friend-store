@@ -8,8 +8,8 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -19,13 +19,13 @@ function LoginForm() {
     setError("");
 
     const result = await signIn("credentials", {
-      email,
-      password,
+      name,
+      code,
       redirect: false,
     });
 
     if (result?.error) {
-      setError("Invalid email or password");
+      setError("Wrong access code. Ask your group leader for the code.");
       setLoading(false);
     } else {
       router.push(callbackUrl);
@@ -53,31 +53,31 @@ function LoginForm() {
           )}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+              Your Name
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bca-teal focus:border-transparent outline-none transition"
-              placeholder="your@email.com"
+              placeholder="Enter your name"
               required
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+            <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
+              Access Code
             </label>
             <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              id="code"
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bca-teal focus:border-transparent outline-none transition"
-              placeholder="Enter your password"
+              placeholder="Enter the access code"
               required
             />
           </div>

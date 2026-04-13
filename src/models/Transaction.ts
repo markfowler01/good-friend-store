@@ -6,7 +6,7 @@ export interface ITransaction extends Document {
   amount: number;
   reason: string;
   serviceDate: Date;
-  recordedBy: Types.ObjectId;
+  recordedBy: string;
   createdAt: Date;
 }
 
@@ -37,8 +37,7 @@ const TransactionSchema = new Schema<ITransaction>(
       default: Date.now,
     },
     recordedBy: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
     },
   },
   {

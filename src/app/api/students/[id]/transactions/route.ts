@@ -34,7 +34,6 @@ export async function GET(
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
-      .populate("recordedBy", "name")
       .lean(),
     Transaction.countDocuments(filter),
   ]);

@@ -11,6 +11,22 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        bca: {
+          teal: "#0bb4aa",
+          "teal-hover": "#076c65",
+          dark: "#101010",
+          light: "#f9fafd",
+          footer: "#272528",
+          "footer-border": "#464348",
+          blue: "#4176FB",
+          brown: "#d19731",
+          red: "#e1051e",
+        },
+      },
+      fontFamily: {
+        body: ["var(--font-inter)", "sans-serif"],
+        heading: ["var(--font-onest)", "sans-serif"],
+        nav: ["var(--font-montserrat)", "sans-serif"],
       },
     },
   },

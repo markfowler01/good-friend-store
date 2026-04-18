@@ -3,8 +3,9 @@ import crypto from "crypto";
 
 export interface IStudent extends Document {
   name: string;
-  grade: string;
+  grade?: string | null;
   uniqueId: string;
+  barcodeId?: string | null;
   ticketBalance: number;
   isActive: boolean;
   createdAt: Date;
@@ -20,13 +21,17 @@ const StudentSchema = new Schema<IStudent>(
     },
     grade: {
       type: String,
-      required: [true, "Grade is required"],
-      enum: ["K", "1", "2", "3", "4", "5"],
+      enum: ["K", "1", "2", "3", "4", "5", null],
+      default: null,
     },
     uniqueId: {
       type: String,
       unique: true,
       default: () => crypto.randomBytes(3).toString("hex").toUpperCase(),
+    },
+    barcodeId: {
+      type: String,
+      trim: true,
     },
     ticketBalance: {
       type: Number,
@@ -46,6 +51,10 @@ const StudentSchema = new Schema<IStudent>(
 StudentSchema.index({ uniqueId: 1 });
 StudentSchema.index({ name: 1 });
 StudentSchema.index({ grade: 1, isActive: 1 });
+StudentSchema.index(
+  { barcodeId: 1 },
+  { unique: true, partialFilterExpression: { barcodeId: { $type: "string" } } }
+);
 
 const Student: Model<IStudent> =
   mongoose.models.Student || mongoose.model<IStudent>("Student", StudentSchema);

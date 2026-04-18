@@ -25,8 +25,9 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="font-nav font-semibold text-lg flex items-center gap-2">
-              <span className="w-8 h-8 bg-bca-teal rounded-full flex items-center justify-center text-sm font-bold">
+              <span className="relative w-8 h-8 bg-bca-teal rounded-full flex items-center justify-center text-sm font-bold">
                 GF
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-bca-accent rounded-full border-2 border-bca-dark" />
               </span>
               <span className="hidden sm:inline">Good Friend Store</span>
             </Link>
@@ -38,9 +39,9 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "font-nav text-sm px-3 py-2 rounded-lg transition",
+                    "relative font-nav text-sm px-3 py-2 rounded-lg transition",
                     pathname === link.href
-                      ? "bg-bca-teal text-white"
+                      ? "bg-bca-teal text-white after:absolute after:left-3 after:right-3 after:-bottom-[3px] after:h-[2px] after:bg-bca-accent after:rounded-full"
                       : "text-gray-300 hover:text-white hover:bg-white/10"
                   )}
                 >
@@ -128,9 +129,9 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "flex flex-col items-center gap-1 px-3 py-1 text-xs transition",
+                "relative flex flex-col items-center gap-1 px-3 py-1 text-xs transition",
                 pathname === link.href
-                  ? "text-bca-teal"
+                  ? "text-bca-teal after:absolute after:-top-2 after:left-1/2 after:-translate-x-1/2 after:w-6 after:h-[2px] after:bg-bca-accent after:rounded-full"
                   : "text-gray-400"
               )}
             >

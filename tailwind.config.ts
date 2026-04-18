@@ -21,6 +21,9 @@ const config: Config = {
           blue: "#4176FB",
           brown: "#d19731",
           red: "#e1051e",
+          accent: "#CD4419",
+          "accent-hover": "#b33a15",
+          "accent-tint": "#fdeee8",
         },
       },
       fontFamily: {

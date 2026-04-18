@@ -5,10 +5,56 @@
 :root {
   --background: #f9fafd;
   --foreground: #101010;
+  --accent: #CD4419;
+  --accent-tint: #fdeee8;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
   overflow-x: hidden;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(205, 68, 25, 0.1);
+  border: 1px solid rgba(205, 68, 25, 0.25);
+  color: var(--accent);
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: eyebrow-pulse 2s infinite;
+}
+
+@keyframes eyebrow-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.accent-card {
+  position: relative;
+}
+
+.accent-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  border-radius: 0 2px 2px 0;
+  background: var(--accent);
 }

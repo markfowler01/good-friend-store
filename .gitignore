@@ -28,6 +28,9 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# kids data (PII — kept local, re-import from Excel if needed)
+scripts/kids-data.json
+
 # vercel
 .vercel
 

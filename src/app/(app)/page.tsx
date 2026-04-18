@@ -70,13 +70,14 @@ export default function DashboardPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-heading font-bold text-bca-dark">Dashboard</h1>
+        <span className="eyebrow mb-3">BCA · Ticket Tracker</span>
+        <h1 className="text-2xl font-heading font-bold text-bca-dark mt-3">Dashboard</h1>
         <p className="text-sm text-gray-500 mt-1">Good Friend Store Ticket Tracker</p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card>
+        <Card className="accent-card">
           <CardBody className="text-center">
             <div className="text-3xl font-heading font-bold text-bca-teal">
               {stats?.totalStudents || 0}
@@ -86,10 +87,10 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardBody className="text-center">
-            <div className="text-3xl font-heading font-bold text-bca-blue">
+            <div className="text-3xl font-heading font-bold text-bca-accent">
               {stats?.totalBalance || 0}
             </div>
-            <div className="text-sm text-gray-500 mt-1">Total Tickets</div>
+            <div className="text-[10px] font-mono tracking-widest uppercase text-gray-400 mt-1">Total Tickets</div>
           </CardBody>
         </Card>
         <Card>
@@ -113,10 +114,10 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <Link href="/tickets/add">
-          <Card hover>
+          <Card hover className="group relative overflow-hidden hover:border-bca-accent/40 hover:shadow-[0_0_24px_rgba(205,68,25,0.15)] transition-all">
             <CardBody className="text-center py-6">
-              <div className="w-12 h-12 bg-bca-teal/10 rounded-full flex items-center justify-center mx-auto mb-2">
-                <svg className="w-6 h-6 text-bca-teal" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-12 h-12 bg-bca-accent/10 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:bg-bca-accent/20 transition-colors">
+                <svg className="w-6 h-6 text-bca-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
               </div>

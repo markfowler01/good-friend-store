@@ -34,15 +34,18 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md mx-4">
-      <div className="bg-white rounded-2xl shadow-lg p-8">
+      <div className="relative bg-white rounded-2xl shadow-lg p-8 overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-bca-teal via-bca-accent to-bca-teal" />
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-bca-teal rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="relative w-16 h-16 bg-bca-teal rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
             </svg>
+            <span className="absolute -bottom-1 -right-1 w-5 h-5 bg-bca-accent rounded-full border-4 border-white" />
           </div>
-          <h1 className="text-2xl font-heading font-bold text-bca-dark">Good Friend Store</h1>
-          <p className="text-gray-500 mt-1 text-sm">Bethany Christian Assembly</p>
+          <span className="eyebrow mb-3">Bethany Christian Assembly</span>
+          <h1 className="text-2xl font-heading font-bold text-bca-dark mt-3">Good Friend Store</h1>
+          <p className="text-gray-400 mt-1 text-xs uppercase tracking-widest font-mono">Ticket Tracker</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -85,7 +88,7 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-bca-teal hover:bg-bca-teal-hover text-white font-medium py-3 px-4 rounded-lg transition disabled:opacity-50"
+            className="w-full bg-bca-teal hover:bg-bca-teal-hover text-white font-medium py-3 px-4 rounded-lg transition disabled:opacity-50 shadow-[0_4px_20px_rgba(205,68,25,0.25)] hover:shadow-[0_6px_28px_rgba(205,68,25,0.4)]"
           >
             {loading ? "Signing in..." : "Sign In"}
           </button>

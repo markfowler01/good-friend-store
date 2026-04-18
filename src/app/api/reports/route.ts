@@ -81,12 +81,13 @@ export async function GET(request: NextRequest) {
   // Grade summaries
   const gradeSummary: Record<string, { earned: number; redeemed: number; students: number }> = {};
   for (const r of report) {
-    if (!gradeSummary[r.grade]) {
-      gradeSummary[r.grade] = { earned: 0, redeemed: 0, students: 0 };
+    const key = r.grade ?? "Ungraded";
+    if (!gradeSummary[key]) {
+      gradeSummary[key] = { earned: 0, redeemed: 0, students: 0 };
     }
-    gradeSummary[r.grade].earned += r.earned;
-    gradeSummary[r.grade].redeemed += r.redeemed;
-    gradeSummary[r.grade].students += 1;
+    gradeSummary[key].earned += r.earned;
+    gradeSummary[key].redeemed += r.redeemed;
+    gradeSummary[key].students += 1;
   }
 
   const totalEarned = report.reduce((sum, r) => sum + r.earned, 0);

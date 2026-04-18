@@ -89,43 +89,25 @@ export default function PrintReportPage() {
         ) : students.length === 0 ? (
           <div className="text-center py-12 text-gray-400">No kids to display</div>
         ) : (
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="border-b border-gray-300">
-                <th className="text-left py-2 pr-3 font-bold text-bca-dark uppercase text-xs tracking-wide">
-                  Name
-                </th>
-                <th className="text-left py-2 pr-3 font-bold text-bca-dark uppercase text-xs tracking-wide w-28">
-                  Barcode
-                </th>
-                <th className="text-right py-2 pl-3 font-bold text-bca-dark uppercase text-xs tracking-wide w-24">
-                  Tickets
-                </th>
-                <th className="w-24 text-center py-2 font-bold text-bca-dark uppercase text-xs tracking-wide">
-                  ✓
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {students.map((s, i) => (
-                <tr
-                  key={s._id}
-                  className={`border-b border-gray-100 ${i % 2 === 0 ? "bg-gray-50" : ""}`}
-                >
-                  <td className="py-2 pr-3 font-medium text-bca-dark">{s.name}</td>
-                  <td className="py-2 pr-3 font-mono text-xs text-gray-500">
-                    {s.barcodeId ?? "—"}
-                  </td>
-                  <td className="py-2 pl-3 text-right font-bold text-bca-accent text-lg">
-                    {s.ticketBalance}
-                  </td>
-                  <td className="py-2 text-center">
-                    <span className="inline-block w-5 h-5 border border-gray-400 rounded" />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="print-columns">
+            {students.map((s, i) => (
+              <div
+                key={s._id}
+                className={`print-row flex items-center gap-2 py-1.5 px-2 text-sm ${
+                  i % 2 === 0 ? "bg-gray-50" : ""
+                }`}
+              >
+                <span className="inline-block w-4 h-4 border border-gray-400 rounded flex-shrink-0" />
+                <span className="flex-1 font-medium text-bca-dark truncate">{s.name}</span>
+                <span className="font-mono text-[10px] text-gray-400 flex-shrink-0">
+                  {s.barcodeId ?? "—"}
+                </span>
+                <span className="font-bold text-bca-accent text-base flex-shrink-0 w-8 text-right">
+                  {s.ticketBalance}
+                </span>
+              </div>
+            ))}
+          </div>
         )}
 
         <footer className="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-400 text-center font-mono uppercase tracking-widest">

@@ -59,6 +59,17 @@ body {
   background: var(--accent);
 }
 
+.print-columns {
+  column-count: 2;
+  column-gap: 1.5rem;
+  column-rule: 1px solid #e5e7eb;
+}
+
+.print-row {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
 @media print {
   nav,
   footer,
@@ -77,12 +88,14 @@ body {
     margin: 0 !important;
   }
   @page {
-    margin: 0.5in;
+    margin: 0.4in;
   }
-  tr {
-    page-break-inside: avoid;
+  .print-columns {
+    column-count: 2;
+    column-gap: 1rem;
   }
-  thead {
-    display: table-header-group;
+  .print-row {
+    font-size: 10pt;
+    padding: 2px 4px !important;
   }
 }

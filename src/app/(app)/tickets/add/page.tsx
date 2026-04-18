@@ -4,23 +4,12 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Card, { CardBody, CardHeader } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
-import Select from "@/components/ui/Select";
 import SearchBar from "@/components/ui/SearchBar";
 import Badge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
 import { cn } from "@/lib/utils";
 
-const reasonOptions = [
-  { value: "", label: "Select a reason" },
-  { value: "Sunday Service", label: "Sunday Service" },
-  { value: "Wednesday Service", label: "Wednesday Service" },
-  { value: "Bonus - Good Behavior", label: "Bonus - Good Behavior" },
-  { value: "Bonus - Memory Verse", label: "Bonus - Memory Verse" },
-  { value: "Bonus - Brought Bible", label: "Bonus - Brought Bible" },
-  { value: "Bonus - Brought Friend", label: "Bonus - Brought Friend" },
-  { value: "Other", label: "Other" },
-];
+const DEFAULT_REASON = "Tickets earned";
 
 interface Student {
   _id: string;
@@ -40,8 +29,6 @@ function AddTicketsContent() {
   const [search, setSearch] = useState("");
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [amount, setAmount] = useState(3);
-  const [reason, setReason] = useState("");
-  const [customReason, setCustomReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
@@ -94,16 +81,12 @@ function AddTicketsContent() {
   }
 
   async function handleSubmit() {
-    if (selectedStudents.length === 0 || !reason || amount < 1) {
-      setError("Please select students, a reason, and amount");
+    if (selectedStudents.length === 0 || amount < 1) {
+      setError("Please select students and an amount");
       return;
     }
 
-    const finalReason = reason === "Other" ? customReason : reason;
-    if (!finalReason) {
-      setError("Please enter a reason");
-      return;
-    }
+    const finalReason = DEFAULT_REASON;
 
     setSubmitting(true);
     setError("");
@@ -337,28 +320,10 @@ function AddTicketsContent() {
                 </div>
               </div>
 
-              <Select
-                id="reason"
-                label="Reason"
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                options={reasonOptions}
-              />
-
-              {reason === "Other" && (
-                <Input
-                  id="customReason"
-                  label="Custom Reason"
-                  value={customReason}
-                  onChange={(e) => setCustomReason(e.target.value)}
-                  placeholder="Enter reason..."
-                />
-              )}
-
               <Button
                 onClick={handleSubmit}
                 loading={submitting}
-                disabled={selectedStudents.length === 0 || !reason}
+                disabled={selectedStudents.length === 0}
                 className="w-full"
                 size="lg"
               >

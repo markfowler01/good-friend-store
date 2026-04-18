@@ -132,8 +132,6 @@ function AddTicketsContent() {
       }
       setSelectedStudents([]);
       setAmount(3);
-      setReason("");
-      setCustomReason("");
       fetchStudents();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to add tickets");

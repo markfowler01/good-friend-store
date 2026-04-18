@@ -3,6 +3,7 @@
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, FormEvent, Suspense } from "react";
+import InstallPrompt from "@/components/ui/InstallPrompt";
 
 function LoginForm() {
   const router = useRouter();
@@ -33,7 +34,9 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-4">
+    <div className="w-full flex flex-col items-center">
+      <InstallPrompt />
+      <div className="w-full max-w-md mx-4">
       <div className="relative bg-white rounded-2xl shadow-lg p-8 overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-bca-teal via-bca-accent to-bca-teal" />
         <div className="text-center mb-8">
@@ -97,6 +100,7 @@ function LoginForm() {
         <p className="text-center text-xs text-gray-400 mt-6">
           Live. Love. Lead. Like Jesus.
         </p>
+      </div>
       </div>
     </div>
   );

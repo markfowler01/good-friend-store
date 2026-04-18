@@ -70,6 +70,7 @@ export async function GET(request: NextRequest) {
       _id: s._id,
       name: s.name,
       grade: s.grade,
+      barcodeId: s.barcodeId ?? null,
       currentBalance: s.ticketBalance,
       earned: data.earned,
       redeemed: data.redeemed,

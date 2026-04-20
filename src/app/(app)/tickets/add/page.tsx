@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Card, { CardBody, CardHeader } from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
+import Select from "@/components/ui/Select";
+import Modal from "@/components/ui/Modal";
 import SearchBar from "@/components/ui/SearchBar";
 import Badge from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
@@ -33,6 +36,12 @@ function AddTicketsContent() {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [gradeFilter, setGradeFilter] = useState("All");
+  const [showNewStudentModal, setShowNewStudentModal] = useState(false);
+  const [newName, setNewName] = useState("");
+  const [newGrade, setNewGrade] = useState("");
+  const [newBarcode, setNewBarcode] = useState("");
+  const [newStartingTickets, setNewStartingTickets] = useState(0);
+  const [creatingStudent, setCreatingStudent] = useState(false);
 
   const fetchStudents = useCallback(async () => {
     setLoading(true);
@@ -78,6 +87,51 @@ function AddTicketsContent() {
 
   function deselectAll() {
     setSelectedStudents([]);
+  }
+
+  function openNewStudentModal() {
+    setNewName(search.trim());
+    setNewGrade("");
+    setNewBarcode("");
+    setNewStartingTickets(0);
+    setError("");
+    setShowNewStudentModal(true);
+  }
+
+  async function createStudent() {
+    if (!newName.trim()) {
+      setError("Name is required");
+      return;
+    }
+    setCreatingStudent(true);
+    setError("");
+    try {
+      const res = await fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newName.trim(),
+          grade: newGrade || undefined,
+          barcodeId: newBarcode.trim() || undefined,
+          startingTickets: newStartingTickets,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to create student");
+      }
+      const created = (await res.json()) as Student;
+      setStudents((prev) => [created, ...prev]);
+      setSelectedStudents((prev) =>
+        mode === "individual" ? [created] : [...prev, created]
+      );
+      setShowNewStudentModal(false);
+      setSuccess(`Added ${created.name} — now pick tickets to give them.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create student");
+    } finally {
+      setCreatingStudent(false);
+    }
   }
 
   async function handleSubmit() {
@@ -199,11 +253,23 @@ function AddTicketsContent() {
               </div>
             </CardHeader>
             <CardBody>
-              <SearchBar
-                onChange={setSearch}
-                placeholder="Search by name..."
-                className="mb-3"
-              />
+              <div className="flex gap-2 mb-3">
+                <SearchBar
+                  onChange={setSearch}
+                  placeholder="Search by name..."
+                  className="flex-1"
+                />
+                <button
+                  onClick={openNewStudentModal}
+                  className="flex items-center gap-1.5 bg-bca-accent hover:bg-bca-accent-hover text-white text-sm font-medium py-2 px-3 rounded-lg shadow-[0_4px_16px_rgba(205,68,25,0.2)] hover:shadow-[0_6px_22px_rgba(205,68,25,0.35)] transition shrink-0"
+                  title="Add new student"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  <span className="hidden sm:inline">New</span>
+                </button>
+              </div>
 
               {mode === "bulk" && (
                 <div className="flex gap-2 mb-3 overflow-x-auto pb-1">
@@ -227,6 +293,21 @@ function AddTicketsContent() {
               {loading ? (
                 <div className="flex justify-center py-8">
                   <Spinner />
+                </div>
+              ) : students.length === 0 ? (
+                <div className="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+                  <p className="text-sm text-gray-500 mb-3">
+                    {search ? `No students matching "${search}"` : "No students yet"}
+                  </p>
+                  <button
+                    onClick={openNewStudentModal}
+                    className="inline-flex items-center gap-1.5 bg-bca-accent hover:bg-bca-accent-hover text-white text-sm font-medium py-2 px-4 rounded-lg transition"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    {search ? `Add "${search}" as new student` : "Add new student"}
+                  </button>
                 </div>
               ) : (
                 <div className="space-y-2 max-h-80 overflow-y-auto">
@@ -332,6 +413,80 @@ function AddTicketsContent() {
           </Card>
         </div>
       </div>
+
+      <Modal
+        open={showNewStudentModal}
+        onClose={() => setShowNewStudentModal(false)}
+        title="Add new student"
+      >
+        <div className="space-y-4">
+          <Input
+            id="new-name"
+            label="Name"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="First Last"
+            autoFocus
+            required
+          />
+          <Select
+            id="new-grade"
+            label="Grade (optional)"
+            value={newGrade}
+            onChange={(e) => setNewGrade(e.target.value)}
+            options={[
+              { value: "", label: "Unknown / skip" },
+              { value: "K", label: "Kindergarten" },
+              { value: "1", label: "Grade 1" },
+              { value: "2", label: "Grade 2" },
+              { value: "3", label: "Grade 3" },
+              { value: "4", label: "Grade 4" },
+              { value: "5", label: "Grade 5" },
+            ]}
+          />
+          <Input
+            id="new-barcode"
+            label="Barcode ID (optional)"
+            value={newBarcode}
+            onChange={(e) => setNewBarcode(e.target.value)}
+            placeholder="51xxx"
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Starting tickets (optional)
+            </label>
+            <input
+              type="number"
+              value={newStartingTickets}
+              onChange={(e) => setNewStartingTickets(Math.max(0, parseInt(e.target.value) || 0))}
+              min="0"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-bca-accent"
+            />
+          </div>
+          {error && (
+            <div className="bg-red-50 text-bca-red text-sm px-3 py-2 rounded-lg">
+              {error}
+            </div>
+          )}
+          <div className="flex gap-2 pt-2">
+            <Button
+              variant="ghost"
+              onClick={() => setShowNewStudentModal(false)}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={createStudent}
+              loading={creatingStudent}
+              disabled={!newName.trim()}
+              className="flex-1 bg-bca-accent hover:bg-bca-accent-hover text-white"
+            >
+              Add & Select
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

@@ -39,21 +39,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { name, grade, startingTickets } = await request.json();
+  const { name, grade, startingTickets, barcodeId } = await request.json();
 
-  if (!name || !grade) {
+  if (!name || !name.trim()) {
     return NextResponse.json(
-      { error: "Name and grade are required" },
+      { error: "Name is required" },
       { status: 400 }
     );
   }
 
   await connectDB();
 
-  const student = await Student.create({
-    name,
-    grade,
+  const payload: Record<string, unknown> = {
+    name: name.trim(),
     ticketBalance: startingTickets || 0,
-  });
+  };
+  if (grade) payload.grade = grade;
+  if (barcodeId && barcodeId.trim()) payload.barcodeId = barcodeId.trim();
+
+  const student = await Student.create(payload);
   return NextResponse.json(student, { status: 201 });
 }

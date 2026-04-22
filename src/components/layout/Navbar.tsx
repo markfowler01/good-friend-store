@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import SuggestButton from "@/components/ui/SuggestButton";
 
 const navLinks = [
   { href: "/", label: "Dashboard", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
@@ -51,6 +52,9 @@ export default function Navbar() {
             </div>
 
             <div className="flex items-center gap-3">
+              <div className="hidden md:block">
+                <SuggestButton />
+              </div>
               {session?.user && (
                 <div className="hidden md:flex items-center gap-3">
                   <span className="text-sm text-gray-400">
@@ -105,6 +109,9 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <div className="px-3 py-3" onClick={() => setMobileOpen(false)}>
+                <SuggestButton />
+              </div>
               {session?.user && (
                 <button
                   onClick={() => signOut({ callbackUrl: "/login" })}

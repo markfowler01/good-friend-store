@@ -379,9 +379,24 @@ function AddTicketsContent() {
                   </button>
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={amount}
-                    onChange={(e) => setAmount(Math.max(1, parseInt(e.target.value) || 1))}
-                    className="w-16 text-center text-2xl font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      // Allow empty while editing — we'll clamp on blur/submit
+                      setAmount(v === "" ? 0 : Math.max(0, parseInt(v) || 0));
+                    }}
+                    onFocus={(e) => e.target.select()}
+                    onBlur={(e) => {
+                      if (!e.target.value || amount < 1) setAmount(1);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && selectedStudents.length > 0 && amount >= 1) {
+                        e.preventDefault();
+                        handleSubmit();
+                      }
+                    }}
+                    className="w-20 text-center text-2xl font-bold border border-gray-300 rounded-lg py-2 outline-none focus:ring-2 focus:ring-bca-teal"
                     min="1"
                   />
                   <button
